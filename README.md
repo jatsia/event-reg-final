@@ -12,10 +12,11 @@ will be introduced in later phases.
 
 ## Run locally
 
-Serve the repository from its root with any static web server. For example:
+Serve the `frontend/` directory with any static web server. For example, from
+the repository root:
 
 ```sh
-python3 -m http.server 8000
+python3 -m http.server 8000 --directory frontend
 ```
 
 Then open `http://localhost:8000`.
@@ -23,17 +24,18 @@ Then open `http://localhost:8000`.
 ## Structure
 
 ```text
-index.html
-src/
-|-- main.js
-|-- presentation/
-|   |-- index.js
-|   `-- navigation.js
-`-- styles/
-    |-- base.css
-    |-- index.css
-    |-- layout.css
-    `-- tokens.css
+frontend/
+|-- index.html
+`-- src/
+    |-- main.js
+    |-- presentation/
+    |   |-- index.js
+    |   `-- navigation.js
+    `-- styles/
+        |-- base.css
+        |-- index.css
+        |-- layout.css
+        `-- tokens.css
 ```
 
 The app uses native HTML, CSS, and JavaScript modules with no build process or
