@@ -3,7 +3,7 @@ import { createNavigation } from "./navigation.js";
 
 function createBrand() {
   const brand = createElement("a", "brand");
-  const mark = createElement("span", "brand-mark", "ER");
+  const mark = createElement("span", "brand-mark");
 
   brand.href = "#events";
   brand.setAttribute("aria-label", "Event Registry home");

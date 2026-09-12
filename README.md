@@ -38,6 +38,8 @@ make check
 Makefile
 package.json
 frontend/
+|-- assets/
+|   `-- logo.png
 |-- index.html
 |-- src/
 |   |-- main.js
@@ -61,6 +63,7 @@ are introduced.
 ## Design principles
 
 - Adaptive monochrome palette with a native system font stack and Inter fallback.
+- Original calendar-ticket line mark with no text or initials.
 - Softly curved content and navigation surfaces with restrained depth.
 - Compact desktop sidebar that becomes horizontal navigation on small screens.
 - Controls use comfortable 44px targets and clearly differentiated states.
