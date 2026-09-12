@@ -1,10 +1,9 @@
-const DEFAULT_ROUTE = "events";
-const ROUTES = new Set(["events", "registrations", "register"]);
+import { DEFAULT_ROUTE, ROUTE_IDS } from "./components/routes.js";
 
 function getRoute() {
   const requestedRoute = window.location.hash.slice(1);
 
-  return ROUTES.has(requestedRoute) ? requestedRoute : DEFAULT_ROUTE;
+  return ROUTE_IDS.includes(requestedRoute) ? requestedRoute : DEFAULT_ROUTE;
 }
 
 function renderRoute(route) {
@@ -24,7 +23,7 @@ function renderRoute(route) {
   document.title = `${heading.textContent} | Event Registry`;
 }
 
-export function initializeNavigation() {
+export function initializeRouter() {
   const renderCurrentRoute = () => renderRoute(getRoute());
 
   window.addEventListener("hashchange", renderCurrentRoute);

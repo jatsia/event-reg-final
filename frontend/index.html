@@ -14,49 +14,7 @@
     <a class="skip-link" href="#content">Skip to content</a>
 
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Application sidebar">
-        <a class="brand" href="#events" aria-label="Event Registry home">
-          <span class="brand-mark" aria-hidden="true">ER</span>
-          <span class="brand-name">Event Registry</span>
-        </a>
-
-        <nav class="navigation" aria-label="Primary navigation">
-          <div class="navigation-group">
-            <p class="navigation-label">Manage</p>
-
-            <a class="navigation-link" href="#events" data-route="events">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
-              </svg>
-              <span>Events</span>
-            </a>
-
-            <a
-              class="navigation-link"
-              href="#registrations"
-              data-route="registrations"
-            >
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM16 11l2 2 4-4" />
-              </svg>
-              <span>Registrations</span>
-            </a>
-          </div>
-
-          <div class="navigation-group">
-            <p class="navigation-label">Public</p>
-
-            <a class="navigation-link" href="#register" data-route="register">
-              <svg aria-hidden="true" viewBox="0 0 24 24">
-                <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-              </svg>
-              <span>Registration page</span>
-            </a>
-          </div>
-        </nav>
-
-        <p class="environment-note">Local workspace</p>
-      </aside>
+      <aside class="sidebar" aria-label="Application sidebar" data-sidebar></aside>
 
       <main class="workspace" id="content" tabindex="-1">
         <section class="view" data-view="events" aria-labelledby="events-title">
@@ -68,17 +26,26 @@
                 Create events and keep their schedules, capacity, and status in one place.
               </p>
             </div>
+            <span class="sample-label">Sample workspace</span>
           </header>
 
-          <div class="empty-state">
-            <span class="empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
-              </svg>
-            </span>
-            <h2>No events yet</h2>
-            <p>Events you create will appear here.</p>
+          <div class="events-region" data-events-region aria-live="polite" aria-busy="true">
+            <ol class="event-list" data-events-list hidden></ol>
+
+            <div class="empty-state" data-events-empty hidden>
+              <span class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+                </svg>
+              </span>
+              <h2>No events yet</h2>
+              <p>Events you create will appear here.</p>
+            </div>
           </div>
+
+          <noscript>
+            <p class="script-note">Enable JavaScript to load the sample event workspace.</p>
+          </noscript>
         </section>
 
         <section

@@ -1,0 +1,104 @@
+import { createElement } from "./components/element.js";
+
+const dateParts = new Intl.DateTimeFormat(undefined, {
+  month: "short",
+  day: "numeric",
+  timeZone: "Asia/Manila",
+});
+
+const schedule = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short",
+  timeZone: "Asia/Manila",
+});
+
+function createDateBlock(event) {
+  const block = createElement("time", "event-date");
+  const parts = dateParts.formatToParts(new Date(event.startsAt));
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  block.dateTime = event.startsAt;
+  block.setAttribute("aria-label", schedule.format(new Date(event.startsAt)));
+  block.append(
+    createElement("span", "event-month", month),
+    createElement("span", "event-day", day),
+  );
+
+  return block;
+}
+
+function createStatus(status) {
+  const label = createElement(
+    "span",
+    `event-status event-status-${status}`,
+    status[0].toUpperCase() + status.slice(1),
+  );
+  label.prepend(createElement("span", "status-mark"));
+
+  return label;
+}
+
+function createEventItem(event) {
+  const item = createElement("li", "event-item");
+  const body = createElement("article", "event-body");
+  const title = createElement("h2", "event-title", event.title);
+  const scheduleLine = createElement("p", "event-meta");
+  const eventTime = createElement(
+    "time",
+    "event-schedule",
+    schedule.format(new Date(event.startsAt)),
+  );
+  const venue = createElement("span", "event-venue", event.venue);
+  const summary = createElement("div", "event-summary");
+  const capacity = createElement(
+    "p",
+    "event-capacity",
+    `${event.registrationCount} of ${event.capacity} registered`,
+  );
+  const availability = createElement(
+    "p",
+    "event-availability",
+    `${event.remainingCapacity} places available`,
+  );
+
+  eventTime.dateTime = event.startsAt;
+  scheduleLine.append(eventTime, venue);
+  body.append(title, scheduleLine);
+  summary.append(createStatus(event.status), capacity, availability);
+  item.append(createDateBlock(event), body, summary);
+
+  return item;
+}
+
+function showError(region, emptyState) {
+  emptyState.hidden = false;
+  emptyState.querySelector("h2").textContent = "Events unavailable";
+  emptyState.querySelector("p").textContent =
+    "Refresh the page to try loading the sample workspace again.";
+  region.setAttribute("data-state", "error");
+}
+
+export async function initializeEvents({ loadEvents }) {
+  const region = document.querySelector("[data-events-region]");
+  const list = region?.querySelector("[data-events-list]");
+  const emptyState = region?.querySelector("[data-events-empty]");
+
+  if (!region || !list || !emptyState) {
+    return;
+  }
+
+  try {
+    const events = await loadEvents();
+
+    list.replaceChildren(...events.map(createEventItem));
+    list.hidden = events.length === 0;
+    emptyState.hidden = events.length > 0;
+    region.setAttribute("data-state", events.length > 0 ? "populated" : "empty");
+  } catch {
+    list.hidden = true;
+    showError(region, emptyState);
+  } finally {
+    region.setAttribute("aria-busy", "false");
+  }
+}
