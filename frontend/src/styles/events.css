@@ -19,17 +19,6 @@
   font-weight: 580;
 }
 
-.notice {
-  margin: var(--space-5) 0 0;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-medium);
-  background: var(--color-raised);
-  color: var(--color-ink);
-  font-size: var(--text-small);
-  font-weight: 580;
-}
-
 .events-region {
   min-height: 24rem;
 }

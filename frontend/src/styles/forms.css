@@ -19,6 +19,12 @@
   box-shadow: var(--shadow-control);
 }
 
+.button-destructive {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-inverse);
+}
+
 .button-secondary {
   border-color: var(--color-line);
   background: var(--color-raised);

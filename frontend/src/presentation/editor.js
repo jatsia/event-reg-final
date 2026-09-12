@@ -84,7 +84,7 @@ function writeEvent(form, event) {
   form.elements.status.value = event?.status ?? "draft";
 }
 
-export function initializeEditor({ saveEvent, onSaved }) {
+export function initializeEditor({ saveEvent, onSaved, confirmDiscard }) {
   const form = document.querySelector("[data-event-form]");
   const view = form?.closest("[data-view]");
   const heading = document.querySelector("[data-editor-title]");
@@ -164,22 +164,24 @@ export function initializeEditor({ saveEvent, onSaved }) {
     }
   });
 
-  document.addEventListener("click", (event) => {
+  document.addEventListener("click", async (event) => {
     const link = event.target.closest('a[href^="#"]');
 
     if (!link || !dirty || view.hidden) {
       return;
     }
 
-    const shouldLeave = window.confirm("Discard your unsaved event changes?");
+    event.preventDefault();
+
+    const shouldLeave = await confirmDiscard();
     if (!shouldLeave) {
-      event.preventDefault();
       return;
     }
 
     dirty = false;
     form.reset();
     clearErrors(form, formError);
+    window.location.hash = link.hash;
   });
 
   window.addEventListener("beforeunload", (event) => {

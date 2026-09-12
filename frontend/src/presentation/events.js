@@ -88,7 +88,6 @@ export function initializeEvents({ loadEvents, onEdit }) {
   const region = document.querySelector("[data-events-region]");
   const list = region?.querySelector("[data-events-list]");
   const emptyState = region?.querySelector("[data-events-empty]");
-  const notice = document.querySelector("[data-events-notice]");
 
   async function render() {
     region.setAttribute("aria-busy", "true");
@@ -108,20 +107,11 @@ export function initializeEvents({ loadEvents, onEdit }) {
     }
   }
 
-  function announce(message) {
-    if (!notice) {
-      return;
-    }
-
-    notice.textContent = message;
-    notice.hidden = false;
-  }
-
   if (!region || !list || !emptyState) {
-    return Object.freeze({ announce() {}, async render() {} });
+    return Object.freeze({ async render() {} });
   }
 
   render();
 
-  return Object.freeze({ announce, render });
+  return Object.freeze({ render });
 }

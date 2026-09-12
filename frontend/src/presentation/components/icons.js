@@ -1,6 +1,14 @@
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 const ICONS = Object.freeze({
+  close: [
+    {
+      tag: "path",
+      attributes: {
+        d: "m6 6 12 12M18 6 6 18",
+      },
+    },
+  ],
   events: [
     {
       tag: "path",

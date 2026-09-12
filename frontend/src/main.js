@@ -8,11 +8,16 @@ import { createRegistrationMemory } from "./infrastructure/registration/index.js
 import {
   initializeEditor,
   initializeEvents,
+  initializeModal,
   initializeRouter,
   initializeSidebar,
+  initializeToasts,
 } from "./presentation/index.js";
 
 initializeSidebar();
+
+const modal = initializeModal();
+const toasts = initializeToasts();
 
 const eventRepository = createEventMemory(createEventSeed());
 const registrationRepository = createRegistrationMemory();
@@ -36,8 +41,15 @@ const editor = initializeEditor({
   onSaved: async (event, action) => {
     window.location.hash = "events";
     await eventsView.render();
-    eventsView.announce(`${event.title} ${action}.`);
+    toasts.show(`${event.title} ${action}.`);
   },
+  confirmDiscard: () =>
+    modal.ask({
+      heading: "Discard changes?",
+      description: "Your unsaved event changes will be lost.",
+      confirmLabel: "Discard changes",
+      destructive: true,
+    }),
 });
 
 eventsView = initializeEvents({
