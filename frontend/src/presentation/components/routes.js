@@ -25,5 +25,12 @@ export const NAVIGATION_GROUPS = Object.freeze([
 ]);
 
 export const ROUTE_IDS = Object.freeze(
-  NAVIGATION_GROUPS.flatMap((group) => group.routes.map((route) => route.id)),
+  [
+    ...NAVIGATION_GROUPS.flatMap((group) => group.routes.map((route) => route.id)),
+    "editor",
+  ],
 );
+
+export function getNavigationRoute(route) {
+  return route === "editor" ? "events" : route;
+}

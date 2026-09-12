@@ -33,3 +33,17 @@ export function validateEvent(event) {
 
   return errors;
 }
+
+export function validatePublication(event, now = new Date()) {
+  if (event.status !== "published") {
+    return {};
+  }
+
+  if (Date.parse(event.startsAt) <= now.getTime()) {
+    return {
+      startsAt: "A published event must be scheduled in the future.",
+    };
+  }
+
+  return {};
+}

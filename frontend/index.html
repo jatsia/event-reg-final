@@ -27,8 +27,15 @@
                 Create events and keep their schedules, capacity, and status in one place.
               </p>
             </div>
-            <span class="sample-label">Sample workspace</span>
+            <div class="page-actions">
+              <span class="sample-label">Sample workspace</span>
+              <button class="button button-primary" type="button" data-new-event>
+                New event
+              </button>
+            </div>
           </header>
+
+          <p class="notice" role="status" data-events-notice hidden></p>
 
           <div class="events-region" data-events-region aria-live="polite" aria-busy="true">
             <ol class="event-list" data-events-list hidden></ol>
@@ -47,6 +54,174 @@
           <noscript>
             <p class="script-note">Enable JavaScript to load the sample event workspace.</p>
           </noscript>
+        </section>
+
+        <section class="view" data-view="editor" aria-labelledby="editor-title" hidden>
+          <header class="page-header">
+            <div>
+              <a class="back-link" href="#events">Events</a>
+              <h1 id="editor-title" data-editor-title>Create event</h1>
+              <p class="page-description" data-editor-description>
+                Add the details attendees need before opening registration.
+              </p>
+            </div>
+          </header>
+
+          <form class="event-form" data-event-form novalidate>
+            <p class="form-error" role="alert" data-form-error hidden></p>
+
+            <section class="form-section" aria-labelledby="details-title">
+              <div class="form-heading">
+                <h2 id="details-title">Details</h2>
+                <p>Name the event and explain what attendees can expect.</p>
+              </div>
+
+              <div class="form-fields">
+                <div class="field">
+                  <label for="event-title">Title</label>
+                  <input
+                    id="event-title"
+                    name="title"
+                    type="text"
+                    maxlength="80"
+                    aria-describedby="event-title-error"
+                    required
+                  />
+                  <p class="field-error" id="event-title-error" data-error-for="title" hidden></p>
+                </div>
+
+                <div class="field">
+                  <label for="event-description">Description</label>
+                  <textarea
+                    id="event-description"
+                    name="description"
+                    rows="5"
+                    maxlength="500"
+                    aria-describedby="event-description-help event-description-error"
+                    required
+                  ></textarea>
+                  <p class="field-help" id="event-description-help">
+                    Keep it concise. Attendees should understand the event at a glance.
+                  </p>
+                  <p
+                    class="field-error"
+                    id="event-description-error"
+                    data-error-for="description"
+                    hidden
+                  ></p>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section" aria-labelledby="schedule-title">
+              <div class="form-heading">
+                <h2 id="schedule-title">Schedule and place</h2>
+                <p>Times use the Asia/Manila time zone.</p>
+              </div>
+
+              <div class="form-fields">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="event-date">Date</label>
+                    <input
+                      id="event-date"
+                      name="date"
+                      type="date"
+                      aria-describedby="event-date-error"
+                      required
+                    />
+                    <p class="field-error" id="event-date-error" data-error-for="date" hidden></p>
+                  </div>
+
+                  <div class="field">
+                    <label for="event-time">Time</label>
+                    <input
+                      id="event-time"
+                      name="time"
+                      type="time"
+                      aria-describedby="event-time-error"
+                      required
+                    />
+                    <p class="field-error" id="event-time-error" data-error-for="time" hidden></p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="event-venue">Venue</label>
+                  <input
+                    id="event-venue"
+                    name="venue"
+                    type="text"
+                    maxlength="120"
+                    aria-describedby="event-venue-error"
+                    required
+                  />
+                  <p class="field-error" id="event-venue-error" data-error-for="venue" hidden></p>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section" aria-labelledby="access-title">
+              <div class="form-heading">
+                <h2 id="access-title">Registration</h2>
+                <p>Set capacity and decide whether attendees can see the event.</p>
+              </div>
+
+              <div class="form-fields">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="event-capacity">Capacity</label>
+                    <input
+                      id="event-capacity"
+                      name="capacity"
+                      type="number"
+                      inputmode="numeric"
+                      min="1"
+                      step="1"
+                      aria-describedby="event-capacity-error"
+                      required
+                    />
+                    <p
+                      class="field-error"
+                      id="event-capacity-error"
+                      data-error-for="capacity"
+                      hidden
+                    ></p>
+                  </div>
+
+                  <div class="field">
+                    <label for="event-status">Status</label>
+                    <select
+                      id="event-status"
+                      name="status"
+                      aria-describedby="event-status-help event-status-error"
+                      required
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="closed">Closed</option>
+                    </select>
+                    <p class="field-help" id="event-status-help">
+                      Drafts stay in the manager workspace.
+                    </p>
+                    <p
+                      class="field-error"
+                      id="event-status-error"
+                      data-error-for="status"
+                      hidden
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="form-actions">
+              <a class="button button-secondary" href="#events">Cancel</a>
+              <button class="button button-primary" type="submit" data-editor-submit>
+                Create event
+              </button>
+            </div>
+          </form>
         </section>
 
         <section

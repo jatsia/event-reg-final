@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   DEFAULT_ROUTE,
+  getNavigationRoute,
   NAVIGATION_GROUPS,
   ROUTE_IDS,
 } from "../src/presentation/components/routes.js";
@@ -10,6 +11,8 @@ import {
 test("navigation routes are unique and include the default route", () => {
   assert.equal(new Set(ROUTE_IDS).size, ROUTE_IDS.length);
   assert.equal(ROUTE_IDS.includes(DEFAULT_ROUTE), true);
+  assert.equal(ROUTE_IDS.includes("editor"), true);
+  assert.equal(getNavigationRoute("editor"), "events");
 });
 
 test("every navigation route provides its label and icon", () => {

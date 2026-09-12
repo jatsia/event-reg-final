@@ -39,7 +39,7 @@ function createStatus(status) {
   return label;
 }
 
-function createEventItem(event) {
+function createEventItem(event, onEdit) {
   const item = createElement("li", "event-item");
   const body = createElement("article", "event-body");
   const title = createElement("h2", "event-title", event.title);
@@ -61,11 +61,16 @@ function createEventItem(event) {
     "event-availability",
     `${event.remainingCapacity} places available`,
   );
+  const actions = createElement("div", "event-actions");
+  const edit = createElement("button", "button button-secondary button-small", "Edit");
 
   eventTime.dateTime = event.startsAt;
+  edit.type = "button";
+  edit.addEventListener("click", () => onEdit(event));
   scheduleLine.append(eventTime, venue);
   body.append(title, scheduleLine);
-  summary.append(createStatus(event.status), capacity, availability);
+  actions.append(edit);
+  summary.append(createStatus(event.status), capacity, availability, actions);
   item.append(createDateBlock(event), body, summary);
 
   return item;
@@ -79,26 +84,44 @@ function showError(region, emptyState) {
   region.setAttribute("data-state", "error");
 }
 
-export async function initializeEvents({ loadEvents }) {
+export function initializeEvents({ loadEvents, onEdit }) {
   const region = document.querySelector("[data-events-region]");
   const list = region?.querySelector("[data-events-list]");
   const emptyState = region?.querySelector("[data-events-empty]");
+  const notice = document.querySelector("[data-events-notice]");
+
+  async function render() {
+    region.setAttribute("aria-busy", "true");
+
+    try {
+      const events = await loadEvents();
+
+      list.replaceChildren(...events.map((event) => createEventItem(event, onEdit)));
+      list.hidden = events.length === 0;
+      emptyState.hidden = events.length > 0;
+      region.setAttribute("data-state", events.length > 0 ? "populated" : "empty");
+    } catch {
+      list.hidden = true;
+      showError(region, emptyState);
+    } finally {
+      region.setAttribute("aria-busy", "false");
+    }
+  }
+
+  function announce(message) {
+    if (!notice) {
+      return;
+    }
+
+    notice.textContent = message;
+    notice.hidden = false;
+  }
 
   if (!region || !list || !emptyState) {
-    return;
+    return Object.freeze({ announce() {}, async render() {} });
   }
 
-  try {
-    const events = await loadEvents();
+  render();
 
-    list.replaceChildren(...events.map(createEventItem));
-    list.hidden = events.length === 0;
-    emptyState.hidden = events.length > 0;
-    region.setAttribute("data-state", events.length > 0 ? "populated" : "empty");
-  } catch {
-    list.hidden = true;
-    showError(region, emptyState);
-  } finally {
-    region.setAttribute("aria-busy", "false");
-  }
+  return Object.freeze({ announce, render });
 }

@@ -5,11 +5,11 @@ and giving attendees a clear registration experience.
 
 ## Current phase
 
-The application includes a responsive monochrome shell and the first complete
-screen: an Events index backed by domain validation, application read logic,
-and in-memory repositories. Reusable sidebar, navigation, route, icon, and DOM
-modules keep the presentation layer focused. The visible records are clearly
-labeled sample data and reset when the page refreshes. Forms arrive later.
+The application includes a responsive monochrome shell, an Events index, and a
+reusable Event editor for create and edit flows. Domain and application rules
+validate event data, future publication dates, and capacity changes before the
+in-memory repository is updated. All visible records are labeled sample data
+and reset when the page refreshes.
 
 ## Run locally
 
@@ -48,10 +48,13 @@ frontend/
 |   |-- infrastructure/
 |   |-- presentation/
 |   |   |-- components/
+|   |   |-- editor.js
 |   |   |-- events.js
 |   |   |-- index.js
 |   |   `-- router.js
 |   `-- styles/
+|       |-- events.css
+|       `-- forms.css
 `-- tests/
 ```
 

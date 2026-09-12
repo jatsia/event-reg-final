@@ -1,4 +1,8 @@
-import { DEFAULT_ROUTE, ROUTE_IDS } from "./components/routes.js";
+import {
+  DEFAULT_ROUTE,
+  getNavigationRoute,
+  ROUTE_IDS,
+} from "./components/routes.js";
 
 function getRoute() {
   const requestedRoute = window.location.hash.slice(1);
@@ -7,12 +11,14 @@ function getRoute() {
 }
 
 function renderRoute(route) {
+  const navigationRoute = getNavigationRoute(route);
+
   document.querySelectorAll("[data-view]").forEach((view) => {
     view.hidden = view.dataset.view !== route;
   });
 
   document.querySelectorAll("[data-route]").forEach((link) => {
-    if (link.dataset.route === route) {
+    if (link.dataset.route === navigationRoute) {
       link.setAttribute("aria-current", "page");
     } else {
       link.removeAttribute("aria-current");
