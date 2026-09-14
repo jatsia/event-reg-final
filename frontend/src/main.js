@@ -1,35 +1,31 @@
 import {
   createEventRecord,
+  createEventMemory,
+  createEventSeed,
+  initializeDetail,
+  initializeEditor,
+  initializeEvents,
+  initializePublicEvents,
   readEvent,
   readEvents,
   readOpenEvents,
   removeEventRecord,
   updateEventRecord,
-} from "./application/event/index.js";
+} from "./events/index.js";
 import {
   cancelRegistrationRecord,
+  createRegistrationMemory,
   createRegistrationRecord,
-  readRegistrations,
-  removeRegistrationRecord,
-} from "./application/registration/index.js";
-import {
-  createEventMemory,
-  createEventSeed,
-} from "./infrastructure/event/index.js";
-import { createRegistrationMemory } from "./infrastructure/registration/index.js";
-import {
   initializeConfirmation,
-  initializeDetail,
-  initializeEditor,
-  initializeEvents,
-  initializeModal,
-  initializePublicEvents,
   initializeRegistrationForm,
   initializeRegistrations,
-  initializeRouter,
-  initializeSidebar,
-  initializeToasts,
-} from "./presentation/index.js";
+  readRegistrations,
+  removeRegistrationRecord,
+} from "./registrations/index.js";
+import { initializeModal } from "./shared/modal.js";
+import { initializeRouter } from "./shared/router.js";
+import { initializeSidebar } from "./shared/shell.js";
+import { initializeToasts } from "./shared/toast.js";
 
 initializeSidebar();
 

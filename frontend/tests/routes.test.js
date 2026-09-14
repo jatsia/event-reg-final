@@ -6,7 +6,7 @@ import {
   getNavigationRoute,
   NAVIGATION_GROUPS,
   ROUTE_IDS,
-} from "../src/presentation/components/routes.js";
+} from "../src/shared/shell.js";
 
 test("navigation routes are unique and include the default route", () => {
   assert.equal(new Set(ROUTE_IDS).size, ROUTE_IDS.length);

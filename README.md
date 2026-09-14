@@ -12,10 +12,10 @@ and review their details, confirm one place, and see a registration reference.
 Managers can then cancel registrations and remove canceled records.
 
 Shared native modals protect consequential choices, while brief feedback appears
-in dismissible upper-right toasts. Domain and application rules validate event
-data, registration details, lifecycle availability, capacity, and removal safety
-before the in-memory repositories are updated. All records are sample data and
-reset when the page refreshes.
+in dismissible upper-right toasts. The event and registration feature modules
+validate data, lifecycle availability, capacity, and removal safety before their
+in-memory stores are updated. All records are sample data and reset when the page
+refreshes.
 
 ## Workflows
 
@@ -98,30 +98,19 @@ frontend/
 |-- index.html
 |-- tests/
 |-- src/
-|   |-- application/
-|   |-- domain/
-|   |-- infrastructure/
+|   |-- events/
+|   |-- registrations/
+|   |-- shared/
 |   |-- main.js
-|   |-- presentation/
-|   |   |-- components/
-|   |   |-- confirmation.js
-|   |   |-- detail.js
-|   |   |-- editor.js
-|   |   |-- events.js
-|   |   |-- form.js
-|   |   |-- index.js
-|   |   |-- public.js
-|   |   |-- registrations.js
-|   |   `-- router.js
 |   `-- styles/
-|       |-- detail.css
+|       |-- base.css
 |       |-- events.css
+|       |-- feedback.css
 |       |-- forms.css
-|       |-- modal.css
-|       |-- public.css
-|       |-- registration.css
+|       |-- index.css
+|       |-- layout.css
 |       |-- registrations.css
-|       `-- toast.css
+|       `-- tokens.css
 ```
 
 The app uses native HTML, CSS, and JavaScript modules with no build process or

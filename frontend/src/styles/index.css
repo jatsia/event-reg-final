@@ -3,9 +3,5 @@
 @import url("./layout.css");
 @import url("./forms.css");
 @import url("./events.css");
-@import url("./detail.css");
-@import url("./public.css");
-@import url("./registration.css");
 @import url("./registrations.css");
-@import url("./modal.css");
-@import url("./toast.css");
+@import url("./feedback.css");

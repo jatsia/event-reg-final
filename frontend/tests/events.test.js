@@ -8,10 +8,11 @@ import {
   readOpenEvents,
   removeEventRecord,
   updateEventRecord,
-} from "../src/application/event/index.js";
-import { createEvent, EventValidationError } from "../src/domain/event/index.js";
-import { createEventMemory } from "../src/infrastructure/event/index.js";
-import { createRegistrationMemory } from "../src/infrastructure/registration/index.js";
+  createEvent,
+  createEventMemory,
+  EventValidationError,
+} from "../src/events/index.js";
+import { createRegistrationMemory } from "../src/registrations/index.js";
 
 const validEvent = {
   id: "later-event",

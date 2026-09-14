@@ -4,16 +4,13 @@ import assert from "node:assert/strict";
 import {
   cancelRegistrationRecord,
   createRegistrationRecord,
+  createRegistrationMemory,
   readRegistrations,
-  removeRegistrationRecord,
-} from "../src/application/registration/index.js";
-import {
-  createRegistration,
   RegistrationValidationError,
-} from "../src/domain/registration/index.js";
-import { createEvent } from "../src/domain/event/index.js";
-import { createEventMemory } from "../src/infrastructure/event/index.js";
-import { createRegistrationMemory } from "../src/infrastructure/registration/index.js";
+  removeRegistrationRecord,
+  createRegistration,
+} from "../src/registrations/index.js";
+import { createEvent, createEventMemory } from "../src/events/index.js";
 
 const event = createEvent({
   id: "open-event",
