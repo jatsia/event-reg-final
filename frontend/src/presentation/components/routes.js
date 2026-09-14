@@ -27,10 +27,17 @@ export const NAVIGATION_GROUPS = Object.freeze([
 export const ROUTE_IDS = Object.freeze(
   [
     ...NAVIGATION_GROUPS.flatMap((group) => group.routes.map((route) => route.id)),
+    "detail",
     "editor",
+    "form",
+    "confirmation",
   ],
 );
 
 export function getNavigationRoute(route) {
-  return route === "editor" ? "events" : route;
+  if (["detail", "editor"].includes(route)) {
+    return "events";
+  }
+
+  return ["form", "confirmation"].includes(route) ? "register" : route;
 }

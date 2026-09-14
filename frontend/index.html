@@ -54,6 +54,30 @@
           </noscript>
         </section>
 
+        <section
+          class="view"
+          data-view="detail"
+          aria-labelledby="detail-title"
+          hidden
+        >
+          <header class="page-header">
+            <div>
+              <a class="back-link" href="#events">Events</a>
+              <h1 id="detail-title" data-detail-title>Event details</h1>
+              <p class="page-description" data-detail-description>
+                Review event information and manage its availability.
+              </p>
+            </div>
+          </header>
+
+          <div
+            class="detail-region"
+            data-detail-region
+            aria-live="polite"
+            aria-busy="true"
+          ></div>
+        </section>
+
         <section class="view" data-view="editor" aria-labelledby="editor-title" hidden>
           <header class="page-header">
             <div>
@@ -166,7 +190,7 @@
               </div>
 
               <div class="form-fields">
-                <div class="field-row">
+                <div class="field-row field-row-access">
                   <div class="field">
                     <label for="event-capacity">Capacity</label>
                     <input
@@ -200,7 +224,7 @@
                       <option value="closed">Closed</option>
                     </select>
                     <p class="field-help" id="event-status-help">
-                      Drafts stay in the manager workspace.
+                      Choose how attendees can access this event.
                     </p>
                     <p
                       class="field-error"
@@ -238,14 +262,23 @@
             </div>
           </header>
 
-          <div class="empty-state">
-            <span class="empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM16 11l2 2 4-4" />
-              </svg>
-            </span>
-            <h2>No registrations yet</h2>
-            <p>Completed registrations will appear here.</p>
+          <div
+            class="registrations-region"
+            data-registrations-region
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <ol class="registration-list" data-registrations-list hidden></ol>
+
+            <div class="empty-state" data-registrations-empty hidden>
+              <span class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM16 11l2 2 4-4" />
+                </svg>
+              </span>
+              <h2>No registrations yet</h2>
+              <p>Completed registrations will appear here.</p>
+            </div>
           </div>
         </section>
 
@@ -260,15 +293,166 @@
             </div>
           </header>
 
-          <div class="empty-state">
-            <span class="empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-4-4" />
-              </svg>
-            </span>
-            <h2>No open events</h2>
-            <p>Check back when a new event is published.</p>
+          <div
+            class="public-region"
+            data-public-region
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <ol class="public-list" data-public-list hidden></ol>
+
+            <div class="empty-state" data-public-empty hidden>
+              <span class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-4-4" />
+                </svg>
+              </span>
+              <h2>No open events</h2>
+              <p>Check back when a new event is published.</p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="view"
+          data-view="form"
+          data-ready="false"
+          aria-labelledby="registration-title"
+          hidden
+        >
+          <header class="page-header">
+            <div>
+              <a class="back-link" href="#register">Available events</a>
+              <h1 id="registration-title" data-registration-title>
+                Register for an event
+              </h1>
+              <p class="page-description" data-registration-description>
+                Enter the attendee details for one place.
+              </p>
+            </div>
+          </header>
+
+          <div class="registration-layout">
+            <div data-registration-context></div>
+
+            <div class="registration-stage" data-registration-form-stage>
+              <form class="registration-form" data-registration-form novalidate>
+                <div class="field">
+                  <label for="attendee-name">Full name</label>
+                  <input
+                    id="attendee-name"
+                    name="attendeeName"
+                    type="text"
+                    autocomplete="name"
+                    maxlength="100"
+                    aria-describedby="attendee-name-error"
+                    required
+                  />
+                  <p
+                    class="field-error"
+                    id="attendee-name-error"
+                    data-registration-error-for="attendeeName"
+                    hidden
+                  ></p>
+                </div>
+
+                <div class="field">
+                  <label for="attendee-email">Email address</label>
+                  <input
+                    id="attendee-email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    maxlength="254"
+                    aria-describedby="attendee-email-help attendee-email-error"
+                    required
+                  />
+                  <p class="field-help" id="attendee-email-help">
+                    Used only to identify this sample registration. No email is sent.
+                  </p>
+                  <p
+                    class="field-error"
+                    id="attendee-email-error"
+                    data-registration-error-for="email"
+                    hidden
+                  ></p>
+                </div>
+
+                <div class="form-actions registration-form-actions">
+                  <button class="button button-primary" type="submit">
+                    Review registration
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <section
+              class="registration-stage"
+              data-registration-review
+              tabindex="-1"
+              aria-labelledby="review-title"
+              hidden
+            >
+              <h2 class="registration-stage-title" id="review-title">Check your details</h2>
+              <p class="registration-stage-copy">
+                This reserves one place. Return to edit anything that is incorrect.
+              </p>
+              <p
+                class="form-error"
+                role="alert"
+                data-registration-review-error
+                hidden
+              ></p>
+              <div data-registration-summary></div>
+              <div class="form-actions registration-form-actions">
+                <button
+                  class="button button-secondary"
+                  type="button"
+                  data-registration-edit
+                >
+                  Edit information
+                </button>
+                <button
+                  class="button button-primary"
+                  type="button"
+                  data-registration-confirm
+                >
+                  Confirm registration
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section
+          class="view"
+          data-view="confirmation"
+          data-ready="false"
+          aria-labelledby="confirmation-title"
+          hidden
+        >
+          <header class="page-header confirmation-header">
+            <div>
+              <p class="eyebrow">Registration complete</p>
+              <h1 id="confirmation-title">You're registered</h1>
+              <p class="page-description">
+                Your place is confirmed in this sample workspace.
+              </p>
+            </div>
+          </header>
+
+          <div class="confirmation-panel">
+            <div data-confirmation-summary></div>
+            <p class="confirmation-note">
+              This demonstration does not send email and resets when the page refreshes.
+            </p>
+            <div class="confirmation-actions">
+              <a class="button button-secondary" href="#register">Browse events</a>
+              <button class="button button-primary" type="button" data-register-again>
+                Register another attendee
+              </button>
+            </div>
           </div>
         </section>
       </main>

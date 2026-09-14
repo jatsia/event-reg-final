@@ -15,12 +15,27 @@ export function createEventMemory(initialEvents = []) {
       return Array.from(events.values());
     },
 
+    async find(id) {
+      return events.get(id) ?? null;
+    },
+
     async update(event) {
       if (!events.has(event.id)) {
         throw new Error("The event could not be found.");
       }
 
       events.set(event.id, event);
+      return event;
+    },
+
+    async remove(id) {
+      const event = events.get(id);
+
+      if (!event) {
+        throw new Error("The event could not be found.");
+      }
+
+      events.delete(id);
       return event;
     },
   });

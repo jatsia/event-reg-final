@@ -12,7 +12,13 @@ test("navigation routes are unique and include the default route", () => {
   assert.equal(new Set(ROUTE_IDS).size, ROUTE_IDS.length);
   assert.equal(ROUTE_IDS.includes(DEFAULT_ROUTE), true);
   assert.equal(ROUTE_IDS.includes("editor"), true);
+  assert.equal(ROUTE_IDS.includes("detail"), true);
+  assert.equal(ROUTE_IDS.includes("form"), true);
+  assert.equal(ROUTE_IDS.includes("confirmation"), true);
   assert.equal(getNavigationRoute("editor"), "events");
+  assert.equal(getNavigationRoute("detail"), "events");
+  assert.equal(getNavigationRoute("form"), "register");
+  assert.equal(getNavigationRoute("confirmation"), "register");
 });
 
 test("every navigation route provides its label and icon", () => {

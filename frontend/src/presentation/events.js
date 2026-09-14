@@ -1,4 +1,5 @@
 import { createElement } from "./components/element.js";
+import { createEventStatus } from "./components/status.js";
 
 const dateParts = new Intl.DateTimeFormat(undefined, {
   month: "short",
@@ -28,18 +29,7 @@ function createDateBlock(event) {
   return block;
 }
 
-function createStatus(status) {
-  const label = createElement(
-    "span",
-    `event-status event-status-${status}`,
-    status[0].toUpperCase() + status.slice(1),
-  );
-  label.prepend(createElement("span", "status-mark"));
-
-  return label;
-}
-
-function createEventItem(event, onEdit) {
+function createEventItem(event, onView, onEdit) {
   const item = createElement("li", "event-item");
   const body = createElement("article", "event-body");
   const title = createElement("h2", "event-title", event.title);
@@ -62,15 +52,26 @@ function createEventItem(event, onEdit) {
     `${event.remainingCapacity} places available`,
   );
   const actions = createElement("div", "event-actions");
-  const edit = createElement("button", "button button-secondary button-small", "Edit");
+  const view = createElement(
+    "button",
+    "button button-secondary button-small",
+    "View details",
+  );
+  const edit = createElement(
+    "button",
+    "button button-secondary button-small",
+    "Edit",
+  );
 
   eventTime.dateTime = event.startsAt;
+  view.type = "button";
+  view.addEventListener("click", () => onView(event));
   edit.type = "button";
   edit.addEventListener("click", () => onEdit(event));
   scheduleLine.append(eventTime, venue);
   body.append(title, scheduleLine);
-  actions.append(edit);
-  summary.append(createStatus(event.status), capacity, availability, actions);
+  actions.append(view, edit);
+  summary.append(createEventStatus(event.status), capacity, availability, actions);
   item.append(createDateBlock(event), body, summary);
 
   return item;
@@ -84,7 +85,7 @@ function showError(region, emptyState) {
   region.setAttribute("data-state", "error");
 }
 
-export function initializeEvents({ loadEvents, onEdit }) {
+export function initializeEvents({ loadEvents, onView, onEdit }) {
   const region = document.querySelector("[data-events-region]");
   const list = region?.querySelector("[data-events-list]");
   const emptyState = region?.querySelector("[data-events-empty]");
@@ -95,7 +96,9 @@ export function initializeEvents({ loadEvents, onEdit }) {
     try {
       const events = await loadEvents();
 
-      list.replaceChildren(...events.map((event) => createEventItem(event, onEdit)));
+      list.replaceChildren(
+        ...events.map((event) => createEventItem(event, onView, onEdit)),
+      );
       list.hidden = events.length === 0;
       emptyState.hidden = events.length > 0;
       region.setAttribute("data-state", events.length > 0 ? "populated" : "empty");

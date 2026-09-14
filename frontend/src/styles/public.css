@@ -1,0 +1,67 @@
+.public-region,
+.registrations-region {
+  min-height: 24rem;
+}
+
+.public-list {
+  margin: 0;
+  padding: var(--space-2) 0 0;
+  list-style: none;
+}
+
+.public-event {
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.public-event-content {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.public-event-body {
+  min-width: 0;
+}
+
+.public-event-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 640;
+  letter-spacing: -0.018em;
+}
+
+.public-event-schedule {
+  display: block;
+  margin-top: var(--space-2);
+  font-weight: 590;
+}
+
+.public-event-venue,
+.public-event-description,
+.public-event-availability {
+  margin: var(--space-1) 0 0;
+  color: var(--color-muted);
+}
+
+.public-event-description {
+  max-width: 38rem;
+  margin-top: var(--space-4);
+}
+
+.public-event-availability {
+  align-self: start;
+  font-size: var(--text-small);
+  font-weight: 610;
+}
+
+@media (min-width: 46rem) {
+  .public-event-content {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .public-event-availability {
+    margin-top: var(--space-1);
+  }
+}

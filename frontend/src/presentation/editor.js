@@ -1,4 +1,9 @@
 const DOMAIN_FIELD_MAP = Object.freeze({ startsAt: "date" });
+const STATUS_HELP = Object.freeze({
+  draft: "Drafts stay in the manager workspace.",
+  published: "Published events are visible to attendees and accept registrations.",
+  closed: "Closed events remain visible to managers but stop accepting registrations.",
+});
 
 function getError(form, name) {
   return form.querySelector(`[data-error-for="${name}"]`);
@@ -84,6 +89,10 @@ function writeEvent(form, event) {
   form.elements.status.value = event?.status ?? "draft";
 }
 
+function updateStatusHelp(form, statusHelp) {
+  statusHelp.textContent = STATUS_HELP[form.elements.status.value];
+}
+
 export function initializeEditor({ saveEvent, onSaved, confirmDiscard }) {
   const form = document.querySelector("[data-event-form]");
   const view = form?.closest("[data-view]");
@@ -91,8 +100,17 @@ export function initializeEditor({ saveEvent, onSaved, confirmDiscard }) {
   const description = document.querySelector("[data-editor-description]");
   const submit = form?.querySelector("[data-editor-submit]");
   const formError = form?.querySelector("[data-form-error]");
+  const statusHelp = form?.querySelector("#event-status-help");
 
-  if (!form || !view || !heading || !description || !submit || !formError) {
+  if (
+    !form ||
+    !view ||
+    !heading ||
+    !description ||
+    !submit ||
+    !formError ||
+    !statusHelp
+  ) {
     return Object.freeze({ open() {} });
   }
 
@@ -108,12 +126,17 @@ export function initializeEditor({ saveEvent, onSaved, confirmDiscard }) {
     submit.textContent = editingId ? "Save changes" : "Create event";
     form.reset();
     writeEvent(form, event);
+    updateStatusHelp(form, statusHelp);
     clearErrors(form, formError);
     dirty = false;
   }
 
   form.addEventListener("input", (event) => {
     dirty = true;
+
+    if (event.target.name === "status") {
+      updateStatusHelp(form, statusHelp);
+    }
 
     if (event.target.name) {
       clearControlError(form, event.target);

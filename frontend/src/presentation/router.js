@@ -7,6 +7,14 @@ import {
 function getRoute() {
   const requestedRoute = window.location.hash.slice(1);
 
+  if (
+    ROUTE_IDS.includes(requestedRoute) &&
+    document.querySelector(`[data-view="${requestedRoute}"]`)?.dataset.ready ===
+      "false"
+  ) {
+    return getNavigationRoute(requestedRoute);
+  }
+
   return ROUTE_IDS.includes(requestedRoute) ? requestedRoute : DEFAULT_ROUTE;
 }
 

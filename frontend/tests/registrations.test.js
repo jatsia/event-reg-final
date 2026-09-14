@@ -1,0 +1,194 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  cancelRegistrationRecord,
+  createRegistrationRecord,
+  readRegistrations,
+  removeRegistrationRecord,
+} from "../src/application/registration/index.js";
+import {
+  createRegistration,
+  RegistrationValidationError,
+} from "../src/domain/registration/index.js";
+import { createEvent } from "../src/domain/event/index.js";
+import { createEventMemory } from "../src/infrastructure/event/index.js";
+import { createRegistrationMemory } from "../src/infrastructure/registration/index.js";
+
+const event = createEvent({
+  id: "open-event",
+  title: "Open Event",
+  description: "An event open to registrations.",
+  startsAt: "2026-12-10T10:00:00+08:00",
+  timeZone: "Asia/Manila",
+  venue: "Makati",
+  capacity: 2,
+  status: "published",
+});
+
+const validRegistration = {
+  id: "registration-one",
+  eventId: event.id,
+  attendeeName: "Ada Lovelace",
+  email: "ADA@example.com",
+  status: "confirmed",
+  createdAt: "2026-09-13T01:00:00.000Z",
+};
+
+test("createRegistration normalizes attendee details", () => {
+  const registration = createRegistration({
+    ...validRegistration,
+    attendeeName: "  Ada Lovelace  ",
+  });
+
+  assert.equal(registration.attendeeName, "Ada Lovelace");
+  assert.equal(registration.email, "ada@example.com");
+  assert.equal(Object.isFrozen(registration), true);
+});
+
+test("createRegistration rejects an invalid email address", () => {
+  assert.throws(
+    () => createRegistration({ ...validRegistration, email: "not-an-email" }),
+    (error) =>
+      error instanceof RegistrationValidationError &&
+      error.errors.email === "Enter a valid email address.",
+  );
+});
+
+test("createRegistration rejects unusually long attendee input", () => {
+  assert.throws(
+    () =>
+      createRegistration({
+        ...validRegistration,
+        attendeeName: "A".repeat(101),
+      }),
+    (error) =>
+      error instanceof RegistrationValidationError &&
+      error.errors.attendeeName ===
+        "Your name must be 100 characters or fewer.",
+  );
+});
+
+test("createRegistrationRecord confirms one available place", async () => {
+  const eventRepository = createEventMemory([event]);
+  const registrationRepository = createRegistrationMemory();
+
+  const registration = await createRegistrationRecord({
+    eventId: event.id,
+    attributes: {
+      attendeeName: validRegistration.attendeeName,
+      email: validRegistration.email,
+    },
+    eventRepository,
+    registrationRepository,
+    createId: () => validRegistration.id,
+    now: new Date(validRegistration.createdAt),
+  });
+
+  assert.equal(registration.status, "confirmed");
+  assert.equal(await registrationRepository.countByEvent(event.id), 1);
+});
+
+test("createRegistrationRecord rejects a full event", async () => {
+  const fullEvent = createEvent({ ...event, capacity: 1 });
+  const eventRepository = createEventMemory([fullEvent]);
+  const registrationRepository = createRegistrationMemory([
+    createRegistration(validRegistration),
+  ]);
+
+  await assert.rejects(
+    createRegistrationRecord({
+      eventId: event.id,
+      attributes: { attendeeName: "Grace Hopper", email: "grace@example.com" },
+      eventRepository,
+      registrationRepository,
+      createId: () => "registration-two",
+      now: new Date(validRegistration.createdAt),
+    }),
+    /reached capacity/,
+  );
+});
+
+test("createRegistrationRecord rejects unavailable event states", async () => {
+  const draftEvent = createEvent({ ...event, status: "draft" });
+  const eventRepository = createEventMemory([draftEvent]);
+
+  await assert.rejects(
+    createRegistrationRecord({
+      eventId: event.id,
+      attributes: { attendeeName: "Grace Hopper", email: "grace@example.com" },
+      eventRepository,
+      registrationRepository: createRegistrationMemory(),
+      createId: () => "registration-two",
+      now: new Date(validRegistration.createdAt),
+    }),
+    /not currently open/,
+  );
+});
+
+test("createRegistrationRecord rechecks the event schedule", async () => {
+  const pastEvent = createEvent({
+    ...event,
+    startsAt: "2026-09-12T10:00:00+08:00",
+  });
+
+  await assert.rejects(
+    createRegistrationRecord({
+      eventId: event.id,
+      attributes: { attendeeName: "Grace Hopper", email: "grace@example.com" },
+      eventRepository: createEventMemory([pastEvent]),
+      registrationRepository: createRegistrationMemory(),
+      createId: () => "registration-two",
+      now: new Date(validRegistration.createdAt),
+    }),
+    /Registration has closed/,
+  );
+});
+
+test("readRegistrations adds the event title", async () => {
+  const eventRepository = createEventMemory([event]);
+  const registration = createRegistration(validRegistration);
+  const registrationRepository = createRegistrationMemory([registration]);
+
+  const records = await readRegistrations({
+    eventRepository,
+    registrationRepository,
+  });
+
+  assert.equal(records[0].eventTitle, event.title);
+});
+
+test("cancelRegistrationRecord restores event capacity", async () => {
+  const registration = createRegistration(validRegistration);
+  const registrationRepository = createRegistrationMemory([registration]);
+
+  const canceled = await cancelRegistrationRecord({
+    id: registration.id,
+    registrationRepository,
+  });
+
+  assert.equal(canceled.status, "canceled");
+  assert.equal(await registrationRepository.countByEvent(event.id), 0);
+  assert.equal(await registrationRepository.countAllByEvent(event.id), 1);
+});
+
+test("removeRegistrationRecord requires cancellation", async () => {
+  const registration = createRegistration(validRegistration);
+  const registrationRepository = createRegistrationMemory([registration]);
+
+  await assert.rejects(
+    removeRegistrationRecord({ id: registration.id, registrationRepository }),
+    /Cancel the registration/,
+  );
+
+  await cancelRegistrationRecord({
+    id: registration.id,
+    registrationRepository,
+  });
+  await removeRegistrationRecord({
+    id: registration.id,
+    registrationRepository,
+  });
+
+  assert.deepEqual(await registrationRepository.list(), []);
+});

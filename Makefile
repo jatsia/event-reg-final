@@ -12,4 +12,5 @@ check:
 	@set -e; for source_file in $$(find frontend/src -name '*.js'); do \
 		node --check "$$source_file"; \
 	done
+	@node -e "Promise.all([import('./frontend/src/presentation/index.js'), import('./frontend/src/application/event/index.js'), import('./frontend/src/application/registration/index.js')])"
 	@node --test frontend/tests/*.test.js
