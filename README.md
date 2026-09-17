@@ -85,19 +85,26 @@ planning, code organization, interaction and validation refinements, testing
 ideas, documentation organization, and generation of the original logo. Each
 member remains responsible for writing their own statement in their own words.
 
-## Run locally
+## Quick start
 
-From the repository root, run:
+You need `make` and Python 3 to run the app. Node.js is needed only for the
+tests. There are no packages to install and no database to set up.
+
+For a fresh checkout:
 
 ```sh
+git clone https://github.com/jatsia/event-registration.git
+cd event-registration
 make dev
 ```
 
-Then open the manager workspace at `http://localhost:8000/#events` or the public
-attendee page at `http://localhost:8000/#register`.
+If you already have the repository, run `make dev` from its root instead. Then
+open [Manager workspace](http://localhost:8000/#events). The manager's
+**Preview attendee page** button opens the attendee view in the same tab. You
+can also open the [attendee page](http://localhost:8000/#register) directly.
 
-Running `make` without a target does the same thing. To use another port, run
-`make dev EVENT_PORT=9000`.
+Press `Ctrl-C` in the terminal to stop the server. If port 8000 is busy, use
+`make dev EVENT_PORT=9000` and open `http://localhost:9000/#events`.
 
 ### Demo both roles
 
@@ -110,7 +117,8 @@ Keep the demo in one browser tab so the in-memory data is preserved:
 5. Open **Registrations** and show the new record and updated availability.
 
 Opening a new tab or refreshing starts a new sample session because this
-milestone intentionally has no API or database.
+milestone intentionally has no API or database. The GitHub repository contains
+the source code; the links above work after you start the local server.
 
 ## Check the project
 
