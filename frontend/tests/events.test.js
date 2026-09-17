@@ -2,15 +2,19 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  createEvent,
+  createEventMemory,
   createEventRecord,
+  createEventSeed,
+  EventRemovalError,
+  EventValidationError,
   readEvent,
   readEvents,
   readOpenEvents,
   removeEventRecord,
   updateEventRecord,
-  createEvent,
-  createEventMemory,
-  EventValidationError,
+  validateEvent,
+  validatePublication,
 } from "../src/events/index.js";
 import { createRegistrationMemory } from "../src/registrations/index.js";
 
@@ -39,6 +43,52 @@ test("createEvent rejects invalid event data", () => {
       error instanceof EventValidationError &&
       error.errors.capacity === "Capacity must be a positive whole number.",
   );
+});
+
+test("validateEvent reports every required field and unsupported value", () => {
+  assert.deepEqual(
+    validateEvent({
+      id: "",
+      title: "",
+      description: "",
+      startsAt: "not-a-date",
+      venue: "",
+      capacity: 1.5,
+      status: "archived",
+    }),
+    {
+      id: "An event ID is required.",
+      title: "An event title is required.",
+      description: "An event description is required.",
+      venue: "A venue is required.",
+      startsAt: "A valid event schedule is required.",
+      capacity: "Capacity must be a positive whole number.",
+      status: "The event status is not supported.",
+    },
+  );
+
+  assert.throws(() => createEvent({}), EventValidationError);
+});
+
+test("createEvent applies the draft and time zone defaults", () => {
+  const event = createEvent({
+    ...validEvent,
+    status: undefined,
+    timeZone: undefined,
+  });
+
+  assert.equal(event.status, "draft");
+  assert.equal(event.timeZone, "Asia/Manila");
+});
+
+test("validatePublication allows drafts and future published events", () => {
+  const now = new Date("2026-09-12T00:00:00+08:00");
+
+  assert.deepEqual(
+    validatePublication({ ...validEvent, status: "draft" }, now),
+    {},
+  );
+  assert.deepEqual(validatePublication(validEvent, now), {});
 });
 
 test("readEvents sorts events and derives registration totals", async () => {
@@ -112,6 +162,50 @@ test("readOpenEvents returns only future published events with space", async () 
   });
 
   assert.deepEqual(events.map((event) => event.id), [open.id]);
+});
+
+test("event summaries never report negative availability", async () => {
+  const event = createEvent({ ...validEvent, capacity: 1 });
+  const eventRepository = createEventMemory([event]);
+  const registrationRepository = createRegistrationMemory([
+    { eventId: event.id, status: "confirmed" },
+    { eventId: event.id, status: "confirmed" },
+  ]);
+
+  const [summary] = await readEvents({
+    eventRepository,
+    registrationRepository,
+  });
+
+  assert.equal(summary.remainingCapacity, 0);
+});
+
+test("event memory store covers create, read, update, and remove errors", async () => {
+  const event = createEvent(validEvent);
+  const eventRepository = createEventMemory();
+
+  await eventRepository.create(event);
+  assert.equal(await eventRepository.find(event.id), event);
+  await assert.rejects(eventRepository.create(event), /already exists/);
+  await assert.rejects(
+    eventRepository.update({ ...event, id: "missing-event" }),
+    /could not be found/,
+  );
+  await assert.rejects(
+    eventRepository.remove("missing-event"),
+    /could not be found/,
+  );
+});
+
+test("event seed provides valid published and draft sample events", () => {
+  const seed = createEventSeed();
+
+  assert.equal(seed.length, 2);
+  assert.deepEqual(
+    seed.map((event) => event.status),
+    ["published", "draft"],
+  );
+  seed.forEach((event) => assert.equal(Object.isFrozen(event), true));
 });
 
 test("createEventRecord validates publication and stores the event", async () => {
@@ -213,5 +307,18 @@ test("removeEventRecord protects events with registrations", async () => {
       error.name === "EventRemovalError" &&
       error.message ===
         "Remove or cancel this event's registrations before removing the event.",
+  );
+});
+
+test("removeEventRecord reports a missing event", async () => {
+  await assert.rejects(
+    removeEventRecord({
+      id: "missing-event",
+      eventRepository: createEventMemory(),
+      registrationRepository: createRegistrationMemory(),
+    }),
+    (error) =>
+      error instanceof EventRemovalError &&
+      error.message === "The event could not be found.",
   );
 });

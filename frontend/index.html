@@ -14,8 +14,9 @@
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
 
-    <div class="app-shell">
+    <div class="app-shell" data-app-shell data-mode="manager">
       <aside class="sidebar" aria-label="Application sidebar" data-sidebar></aside>
+      <header class="public-header" data-public-header hidden></header>
 
       <main class="workspace" id="content" tabindex="-1">
         <section class="view" data-view="events" aria-labelledby="events-title">
@@ -28,7 +29,9 @@
               </p>
             </div>
             <div class="page-actions">
-              <span class="sample-label">Sample workspace</span>
+              <a class="button button-secondary" href="#register">
+                Preview attendee page
+              </a>
               <button class="button button-primary" type="button" data-new-event>
                 New event
               </button>
@@ -285,7 +288,7 @@
         <section class="view" data-view="register" aria-labelledby="register-title" hidden>
           <header class="page-header">
             <div>
-              <p class="eyebrow">Attendee view</p>
+              <p class="eyebrow">Event registration</p>
               <h1 id="register-title">Find an event</h1>
               <p class="page-description">
                 Published events that are open for registration will appear here.
@@ -437,7 +440,7 @@
               <p class="eyebrow">Registration complete</p>
               <h1 id="confirmation-title">You're registered</h1>
               <p class="page-description">
-                Your place is confirmed in this sample workspace.
+                Your place is confirmed.
               </p>
             </div>
           </header>

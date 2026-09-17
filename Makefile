@@ -13,4 +13,14 @@ check:
 		node --check "$$source_file"; \
 	done
 	@node -e "Promise.all([import('./frontend/src/events/index.js'), import('./frontend/src/registrations/index.js'), import('./frontend/src/shared/shell.js')])"
-	@node --test frontend/tests/*.test.js
+	@node --experimental-test-coverage \
+		--test-coverage-include='frontend/src/events/model.js' \
+		--test-coverage-include='frontend/src/events/service.js' \
+		--test-coverage-include='frontend/src/events/store.js' \
+		--test-coverage-include='frontend/src/registrations/model.js' \
+		--test-coverage-include='frontend/src/registrations/service.js' \
+		--test-coverage-include='frontend/src/registrations/store.js' \
+		--test-coverage-lines=100 \
+		--test-coverage-branches=100 \
+		--test-coverage-functions=100 \
+		--test frontend/tests/*.test.js

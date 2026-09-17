@@ -24,10 +24,10 @@ import {
 } from "./registrations/index.js";
 import { initializeModal } from "./shared/modal.js";
 import { initializeRouter } from "./shared/router.js";
-import { initializeSidebar } from "./shared/shell.js";
+import { initializeShell } from "./shared/shell.js";
 import { initializeToasts } from "./shared/toast.js";
 
-initializeSidebar();
+initializeShell();
 
 const modal = initializeModal();
 const toasts = initializeToasts();
@@ -101,7 +101,7 @@ detailView = initializeDetail({
     modal.ask({
       heading: `Remove ${event.title}?`,
       description:
-        "This event will be removed from the sample workspace. This cannot be undone.",
+        "This event will be permanently removed. This cannot be undone.",
       confirmLabel: "Remove event",
       destructive: true,
     }),

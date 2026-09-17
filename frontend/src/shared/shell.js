@@ -15,26 +15,25 @@ export const NAVIGATION_GROUPS = Object.freeze([
       }),
     ]),
   }),
-  Object.freeze({
-    label: "Public",
-    routes: Object.freeze([
-      Object.freeze({
-        id: "register",
-        label: "Registration page",
-        icon: "public",
-      }),
-    ]),
-  }),
 ]);
 
-export const ROUTE_IDS = Object.freeze([
+export const MANAGER_ROUTE_IDS = Object.freeze([
   ...NAVIGATION_GROUPS.flatMap((group) =>
     group.routes.map((route) => route.id),
   ),
   "detail",
   "editor",
+]);
+
+export const PUBLIC_ROUTE_IDS = Object.freeze([
+  "register",
   "form",
   "confirmation",
+]);
+
+export const ROUTE_IDS = Object.freeze([
+  ...MANAGER_ROUTE_IDS,
+  ...PUBLIC_ROUTE_IDS,
 ]);
 
 export function getNavigationRoute(route) {
@@ -43,6 +42,10 @@ export function getNavigationRoute(route) {
   }
 
   return ["form", "confirmation"].includes(route) ? "register" : route;
+}
+
+export function getShellMode(route) {
+  return PUBLIC_ROUTE_IDS.includes(route) ? "public" : "manager";
 }
 
 function createNavigationLink(route) {
@@ -72,11 +75,11 @@ function createNavigation() {
   return navigation;
 }
 
-function createBrand() {
+function createBrand(href) {
   const brand = createElement("a", "brand");
   const mark = createElement("span", "brand-mark");
 
-  brand.href = "#events";
+  brand.href = href;
   brand.setAttribute("aria-label", "Event Registry home");
   mark.setAttribute("aria-hidden", "true");
   brand.append(mark, createElement("span", "brand-name", "Event Registry"));
@@ -84,16 +87,54 @@ function createBrand() {
   return brand;
 }
 
-export function initializeSidebar() {
-  const sidebar = document.querySelector("[data-sidebar]");
+function createPublicHeader() {
+  const inner = createElement("div", "public-header-inner");
+  const managerLink = createElement(
+    "a",
+    "button button-secondary public-manager-link",
+    "Manager workspace",
+  );
 
-  if (!sidebar) {
-    return;
+  managerLink.href = "#events";
+  inner.append(createBrand("#register"), managerLink);
+
+  return inner;
+}
+
+export function initializeShell() {
+  const sidebar = document.querySelector("[data-sidebar]");
+  const publicHeader = document.querySelector("[data-public-header]");
+
+  if (sidebar) {
+    sidebar.replaceChildren(
+      createBrand("#events"),
+      createNavigation(),
+      createElement(
+        "p",
+        "environment-note",
+        "Sample data - resets on refresh",
+      ),
+    );
   }
 
-  sidebar.replaceChildren(
-    createBrand(),
-    createNavigation(),
-    createElement("p", "environment-note", "Sample data - resets on refresh"),
-  );
+  publicHeader?.replaceChildren(createPublicHeader());
+}
+
+export function renderShell(route) {
+  const shell = document.querySelector("[data-app-shell]");
+  const sidebar = document.querySelector("[data-sidebar]");
+  const publicHeader = document.querySelector("[data-public-header]");
+  const mode = getShellMode(route);
+
+  if (shell) {
+    shell.dataset.mode = mode;
+  }
+
+  if (sidebar) {
+    sidebar.hidden = mode === "public";
+  }
+
+  if (publicHeader) {
+    publicHeader.hidden = mode === "manager";
+  }
 }

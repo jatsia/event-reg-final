@@ -81,7 +81,7 @@ function showError(region, emptyState) {
   emptyState.hidden = false;
   emptyState.querySelector("h2").textContent = "Events unavailable";
   emptyState.querySelector("p").textContent =
-    "Refresh the page to try loading the sample workspace again.";
+    "Refresh the page to try again.";
   region.setAttribute("data-state", "error");
 }
 

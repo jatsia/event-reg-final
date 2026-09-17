@@ -1,7 +1,7 @@
 # Event Registry
 
-A focused browser-based workspace for creating events, managing registrations,
-and giving attendees a clear registration experience.
+A focused browser application with a manager workspace for creating events and
+managing registrations, plus a separate public-facing attendee experience.
 
 ## Implementation status
 
@@ -10,6 +10,10 @@ submission steps are still pending. Managers can create, inspect, edit, publish,
 close, and safely remove events. Attendees can browse available events, enter
 and review their details, confirm one place, and see a registration reference.
 Managers can then cancel registrations and remove canceled records.
+
+Manager routes use the workspace sidebar, while attendee routes use a standalone
+public header with no event-management navigation. Both experiences stay in the
+same browser session so changes remain connected during the demonstration.
 
 Shared native modals protect consequential choices, while brief feedback appears
 in dismissible upper-right toasts. The event and registration feature modules
@@ -20,8 +24,24 @@ refreshes.
 ## Workflows
 
 - Manager: Events → Event detail → Create or edit → Publish or close → Remove.
+- Handoff: Events → Preview attendee page.
 - Attendee: Registration page → Event → Attendee details → Review → Confirmation.
 - Registration management: Registrations → Cancel → Remove canceled record.
+
+### CRUD map
+
+The CRUD functions are grouped by feature instead of being scattered across
+one-file layers:
+
+| Operation | Events | Registrations |
+| --- | --- | --- |
+| Create | `events/service.js` → `createEventRecord` | `registrations/service.js` → `createRegistrationRecord` |
+| Read | `events/service.js` → `readEvent`, `readEvents`, `readOpenEvents` | `registrations/service.js` → `readRegistrations` |
+| Update | `events/service.js` → `updateEventRecord` | `registrations/service.js` → `cancelRegistrationRecord` |
+| Delete | `events/service.js` → `removeEventRecord` | `registrations/service.js` → `removeRegistrationRecord` |
+
+Each feature's `model.js` owns validation and its `store.js` provides the
+in-memory create, read, update, and remove mechanics.
 
 ## Assignment coverage
 
@@ -73,10 +93,24 @@ From the repository root, run:
 make dev
 ```
 
-Then open `http://localhost:8000`.
+Then open the manager workspace at `http://localhost:8000/#events` or the public
+attendee page at `http://localhost:8000/#register`.
 
 Running `make` without a target does the same thing. To use another port, run
 `make dev EVENT_PORT=9000`.
+
+### Demo both roles
+
+Keep the demo in one browser tab so the in-memory data is preserved:
+
+1. Create a future published event in the manager workspace.
+2. Select **Preview attendee page**. The manager sidebar disappears.
+3. Register an attendee and confirm the registration.
+4. Select **Manager workspace** in the public header.
+5. Open **Registrations** and show the new record and updated availability.
+
+Opening a new tab or refreshing starts a new sample session because this
+milestone intentionally has no API or database.
 
 ## Check the project
 
@@ -86,6 +120,11 @@ suite with:
 ```sh
 make check
 ```
+
+The command enforces 100% line, branch, and function coverage for the event and
+registration models, CRUD services, and stores. Browser-facing screen modules
+are syntax and import checked; their visual, keyboard, and responsive behavior
+remains part of the required human review.
 
 ## Structure
 
@@ -97,11 +136,38 @@ frontend/
 |   `-- logo.png
 |-- index.html
 |-- tests/
+|   |-- events.test.js
+|   |-- registrations.test.js
+|   `-- routes.test.js
 |-- src/
-|   |-- events/
-|   |-- registrations/
-|   |-- shared/
 |   |-- main.js
+|   |-- events/
+|   |   |-- browse.js
+|   |   |-- detail.js
+|   |   |-- editor.js
+|   |   |-- index.js
+|   |   |-- list.js
+|   |   |-- model.js
+|   |   |-- service.js
+|   |   `-- store.js
+|   |-- registrations/
+|   |   |-- confirmation.js
+|   |   |-- form.js
+|   |   |-- index.js
+|   |   |-- list.js
+|   |   |-- model.js
+|   |   |-- service.js
+|   |   |-- store.js
+|   |   `-- summary.js
+|   |-- shared/
+|   |   |-- dom.js
+|   |   |-- format.js
+|   |   |-- icons.js
+|   |   |-- modal.js
+|   |   |-- router.js
+|   |   |-- shell.js
+|   |   |-- status.js
+|   |   `-- toast.js
 |   `-- styles/
 |       |-- base.css
 |       |-- events.css
@@ -112,6 +178,30 @@ frontend/
 |       |-- registrations.css
 |       `-- tokens.css
 ```
+
+The source is organized by feature so related code stays together:
+
+- `main.js` creates the in-memory stores, connects the two features, and starts
+  the router and shared interface helpers.
+- `events/` owns event validation, CRUD operations, sample data, and the event
+  list, detail, editor, and public browsing screens.
+- `registrations/` owns attendee validation, registration CRUD operations, its
+  in-memory store, and the form, review, confirmation, and management screens.
+- `shared/` contains small reusable browser helpers. It has no event or
+  registration business rules.
+- `styles/` keeps design tokens and base layout separate from feature and
+  feedback styles. `index.css` is the single stylesheet loaded by the page.
+- `tests/` verifies routes plus all model, CRUD service, and store behavior.
+
+Within each feature, `model.js` validates and creates records, `service.js`
+contains the user-facing CRUD rules, `store.js` handles in-memory storage, and
+`index.js` exposes the feature's public functions. The remaining files render
+the screens for that feature.
+
+The usual flow is: a screen collects input → a service applies the rules → a
+model validates the record → a store reads or changes the in-memory data → the
+screen renders the result. This keeps the code direct without adding framework
+or architecture layers the project does not need.
 
 The app uses native HTML, CSS, and JavaScript modules with no build process or
 runtime dependencies. The root `Makefile` is the stable entry point; it can be

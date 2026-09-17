@@ -25,14 +25,6 @@ const ICONS = Object.freeze({
       },
     },
   ],
-  public: [
-    {
-      tag: "path",
-      attributes: {
-        d: "M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5",
-      },
-    },
-  ],
 });
 
 function createSvgElement({ tag, attributes }) {
