@@ -93,8 +93,8 @@ tests. There are no packages to install and no database to set up.
 For a fresh checkout:
 
 ```sh
-git clone https://github.com/jatsia/event-registration.git
-cd event-registration
+git clone https://github.com/jatsia/event-reg-final.git
+cd event-reg-final
 make dev
 ```
 
